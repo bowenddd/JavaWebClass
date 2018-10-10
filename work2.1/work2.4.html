@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>work2.4</title>
+</head>
+<body>
+	<script type="text/javascript">
+		var str = "I am a man, I like coding!";
+		var newstr = "";
+		for (var i = 0; i <str.length ; i++){
+			newstr = newstr + str.substring(i,i+1) +"#";
+		}
+		document.write(str + '<br />');
+		document.write(newstr + '<br />');
+		var sum = 0;
+		for (var i = 0; i < newstr.length; i++) {
+			if (newstr[i] =="#") {
+				sum ++;
+			}
+		}
+		document.write("#的个数为: " + sum);
+	</script>
+</body>
+</html>
