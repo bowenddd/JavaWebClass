@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+	"http://struts.apache.org.dtds.struts-2.5.dtd">
+<struts>
+	<constant name="struts.enable.DynamicMethodInvocation" value="true" />
+    <constant name="struts.devMode" value="true" />
+    <constant name="struts.i18n.encoding" value="UTF-8" /> 
+	<constant name="struts.objectFactory" value="spring" />
+    
+     <!-- 指定国际化资源文件的baseName为messageResource -->  
+    <constant name="struts.custom.i18n.resources" value="messageResource" />  
+    
+     <!-- 上传的全部图片的最大限制-->  
+    <constant name="struts.multipart.maxSize" value="1024102400" />  
+     
+     <!-- 临时存放文件的路径 -->  
+	<constant name="struts.multipart.saveDir" value="d:/test" />  
+	
+    <package name="from" namespace="/from" extends="struts-default">
+        
+        <global-allowed-methods>regex:.x*</global-allowed-methods>
+         
+        
+        <action name="listaction" class="ListAction" method="list">
+            <result name="list">
+              	/list.jsp
+            </result>                   
+        </action>
+		
+		<action name="find" class="FindAction" method="findproduct">
+			<result name="success">
+				/findlist.jsp
+			</result>
+		</action>
+
+		<action name="loginaction" class="LoginAction">
+            <result name="user">
+                /cart.jsp
+            </result>
+             <result name="restart">
+                /login.jsp
+            </result>
+                       
+             <result name="manager">
+                /manager/index.jsp
+            </result>           
+        </action>
+		
+		<action name="loginoutaction" class="LoginOutAction">
+            <result name="out">
+              	/login.jsp
+            </result>                   
+        </action>
+		
+		<action name="addaction" class="ListAction" method="addItem">
+            <result name="add">
+              	/reflushlist.jsp
+            </result>         
+            <result name="find">       
+              	/reflushfind.jsp  	
+            </result>           
+        </action>  
+		
+		<action name="cart_index" class="CartAction" method="CartIndex">
+            <result name="cart">
+              	/cart.jsp
+            </result>
+        </action>
+         
+        <action name="cart_modify" class="CartAction" method="modifyItemNumber">
+            <result name="cart">
+              	/cart.jsp
+            </result>
+        </action>
+            
+        <action name="cart_delete" class="CartAction" method="deleteItem">
+            <result name="cart">
+              	/cart.jsp
+            </result>
+        </action>
+            
+        <action name="cart_clear" class="CartAction" method="clear">
+            <result name="cart">
+              	/cart.jsp
+			</result>                      
+        </action>
+		
+        <action name="order_index" class="OrderAction" method="index">
+            <result name="login">
+              	/login.jsp
+            </result>
+            <result name="order">
+              	/order.jsp
+            </result>
+        </action>
+            
+        <action name="cart_post" class="OrderAction" method="postOrder">
+            <result name="success">
+              	/success.jsp
+            </result>                  
+        </action>
+		
+		<action name="user_register" class="RegisterAction" method="userRegister">
+            <result name="reset">
+              	/register.jsp
+            </result>
+            
+             <result name="verify">
+              	/registerreminder.jsp
+            </result>                                                          
+        </action>
+		
+        <action name="user_save" class="RegisterAction" method="usersave">
+            <result name="save">
+              	/login.jsp
+            </result>                              
+        </action>  
+		
+        <action name="user_code" class="RegisterAction" method="code">
+                         
+        </action>
+	
+    </package>
+	
+	
+	
+	<package name="manager" namespace="/manager" extends="struts-default">
+     
+		<action name="manager" class="ManagerAction" method="index">
+            <result name="manager">
+              	/manager/manager.jsp
+            </result>                              
+        </action>
+        	
+        <action name="nextaction" class="ManagerAction" method="next">
+            <result name="next">
+              	/manager/flush.jsp
+            </result>                              
+        </action>
+     
+		<action name="addproduct" class="ProductAction" method="addProduct">
+            <result name="success">
+              	/manager/index.jsp
+            </result>                              
+		</action>
+     
+		<action name="listproduct" class="ProductAction" method="productlist">
+            <result name="list">
+              	/manager/productlist.jsp
+            </result>                              
+		</action>
+      
+		<action name="update" class="ProductAction" method="updateProduct">
+            <result name="update">
+              	/manager/updateproduct.jsp
+            </result>                              
+		</action>                     
+
+     
+		<action name="save" class="ProductAction" method="saveProduct">
+            <result name="save">
+              	/manager/reflush.jsp
+            </result>                              
+		</action>         
+      
+ 
+      
+        <action name="delete" class="ProductAction" method="deleteProduct  ">
+            <result name="delete">
+              	/manager/reflush.jsp
+            </result>                              
+		</action>               	     
+     </package>
+
+	
+
+</struts>

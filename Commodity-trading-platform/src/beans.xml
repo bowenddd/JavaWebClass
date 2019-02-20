@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:context="http://www.springframework.org/schema/context"
+     xmlns:aop="http://www.springframework.org/schema/aop"
+     xmlns:tx="http://www.springframework.org/schema/tx"
+     xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context-4.3.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+         http://www.springframework.org/schema/tx
+     	http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+  
+	<context:annotation-config/>
+	<context:component-scan base-package="com.cn.connodity"/>
+	
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+	<property name="username" value="root"></property>
+	<property name="password" value="root"></property>
+	<property name="url" value="jdbc:mysql://localhost:3306/shop"></property>
+	<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+	</bean>
+
+	
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+	<property name="configLocation">
+	<value>classpath:hibernate.cfg.xml</value>
+	</property>
+	<property name="dataSource" ref="dataSource"/>
+	<property name="hibernateProperties">
+		<props>
+			<prop key="hibernate.connection.autocommit">true</prop>
+			<prop key="hibernate.show_sql">true</prop>
+		</props>
+	</property>
+	</bean>
+  	<bean id="txManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+  	<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<!-- <aop:config>
+		
+			<aop:pointcut expression="execution ( public * com.cn.connodity.dao..*.*(..))" id="bussinessService"/>
+	
+			<aop:advisor pointcut-ref="bussinessService" advice-ref="txAdvice"/>
+			
+	</aop:config>
+	
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+	  <tx:attributes>
+	  <tx:method name="get*" read-only="true" />
+	  <tx:method name="save*" propagation ="REQUIRED"/>
+	  <tx:method name="delete*" propagation ="REQUIRED"/>
+	  <tx:method name="update*" propagation ="REQUIRED"/>
+	   <tx:method name="loginCheck" propagation ="REQUIRED"/>
+	  </tx:attributes>
+	</tx:advice>
+ -->  
+  	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+		
+			<property name="sessionFactory" ref="sessionFactory"></property>
+	
+	</bean>
+	
+	<!-- dao层 -->
+	<bean id="baseDAO" class="com.cn.connodity.dao.BaseDAOImpl">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>	
+	<bean id="userDAO" class="com.cn.connodity.dao.UserDAOImpl">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>	
+	
+	<!--业务层-->
+	<bean id="productServiceTarget" 
+		class="com.cn.connodity.service.ProductServiceImpl">
+		<property name="baseDAO" ref="baseDAO" />
+	</bean>
+	<bean id="userServiceTarget" 
+		class="com.cn.connodity.service.UserServiceImpl">
+		<property name="userDAO" ref="userDAO" />
+	</bean>
+	<bean id="orderServiceTarget" 
+		class="com.cn.connodity.service.OrderServiceImpl">
+		<property name="baseDAO" ref="baseDAO" />
+	</bean>
+	
+	<!-- 表现层 -->
+	<bean id="ListAction"  class="com.cn.connodity.action.ListAction" scope="prototype">
+		<property name="productService" ref="productServiceTarget"></property>
+	</bean>	
+	<bean id="CartAction" class="com.cn.connodity.action.CartAction" scope="prototype">
+	</bean>
+	
+	<bean id="FindAction"  class="com.cn.connodity.action.FindAction" scope="prototype">
+		<property name="productService" ref="productServiceTarget"></property>
+	</bean>
+	<bean id="LoginAction" class="com.cn.connodity.action.LoginAction" scope="prototype">
+		<property name="userService" ref="userServiceTarget"></property>
+	</bean>
+	<bean id="LoginOutAction" class="com.cn.connodity.action.LoginOutAction" scope="prototype">
+	</bean>
+	<bean id="OrderAction" class="com.cn.connodity.action.OrderAction" scope="prototype">
+		<property name="orderService" ref="orderServiceTarget"></property>
+	</bean>		
+	<bean id="RegisterAction" class="com.cn.connodity.action.RegisterAction" scope="prototype">
+		<property name="userService" ref="userServiceTarget"></property>
+	</bean>
+	<bean id="ProductAction" class="com.cn.connodity.action.ProductAction" scope="prototype">
+		<property name="productService" ref="productServiceTarget"></property>
+	</bean>	
+	<bean name="ManagerAction" class="com.cn.connodity.action.ManagerAction" scope="prototype">
+		<property name="orderService" ref="orderServiceTarget"></property>
+	</bean>	
+	
+	<!--邮件设置-->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.163.com"/>
+		<property name="port" value="25"/>
+		<property name="username" value="trading__platform@163.com"/>
+		<property name="password" value="hdu106151x"/>
+		<property name="JavaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+			</props>
+		</property>
+	</bean>
+	<aop:config>
+		
+			<aop:pointcut expression="execution ( public * com.cn.connodity.service..*.*(..))" id="bussinessService"/>
+	
+			<aop:advisor pointcut-ref="bussinessService" advice-ref="txAdvice"/>
+			
+	</aop:config>	
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+	  <tx:attributes>
+	  <tx:method name="get*" read-only="true" />
+	  <tx:method name="next*" propagation ="REQUIRED"/>
+	   <tx:method name="login*" propagation ="REQUIRED"/>
+	   <tx:method name="generate*" propagation ="REQUIRED"/>
+	   <tx:method name="add*" propagation ="REQUIRED"/>
+	   <tx:method name="delete*" propagation ="REQUIRED"/>
+	   <tx:method name="Update*" propagation ="REQUIRED"/>
+	  </tx:attributes>
+	</tx:advice>
+</beans>
+
+
+
+
+
+
+
+
